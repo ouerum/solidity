@@ -5,6 +5,7 @@ Language Features:
 
 Compiler Features:
  * Code Generator: Use SELFBALANCE for ``address(this).balance`` if using Istanbul EVM
+ * SMTChecker: Add break/continue support to the CHC engine.
 
 
 Bugfixes:
