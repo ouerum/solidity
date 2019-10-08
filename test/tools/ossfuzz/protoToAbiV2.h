@@ -125,33 +125,31 @@ private:
 		ADD,
 		SKIP
 	};
+	/// Enum of possible function types that decode abi
+	/// encoded parameters.
 	enum class CalleeType
 	{
 		PUBLIC,
 		EXTERNAL
 	};
-	std::pair<std::string, std::string> visit(VarDecl const&);
-	std::string visit(TestFunction const&, std::string const&);
+
+	/// Visitors for various Protobuf types
+	/// Visit top-level contract specification
 	void visit(Contract const&);
 
-	template <typename T>
-	std::pair<std::string, std::string> processType(T const& _type, bool _isValueType);
+	/// Convert test function specification into Solidity test
+	/// function
+	/// @param _testSpec: Protobuf test function specification
+	/// @param _storageDefs: String containing Solidity assignment
+	/// statements to be placed inside the scope of the test function.
+	std::string visit(TestFunction const& _testSpec, std::string const& _storageDefs);
 
-	template <typename T>
-	std::pair<std::string, std::string> assignChecker(
-		std::string const& _varName,
-		std::string const& _paramName,
-		T _type
-	);
-
-	template <typename T>
-	std::pair<std::string, std::string> varDecl(
-		std::string const& _varName,
-		std::string const& _paramName,
-		T _type,
-		bool _isValueType,
-		std::string const& _location
-	);
+	/// Visitors for the remaining protobuf types. They convert
+	/// the input protobuf specification type into Solidity code.
+	/// @return A pair of strings, first of which contains Solidity
+	/// code to be placed inside contract scope, second of which contains
+	/// Solidity code to be placed inside test function scope.
+	std::pair<std::string, std::string> visit(VarDecl const&);
 	std::pair<std::string, std::string> visit(Type const&);
 	std::pair<std::string, std::string> visit(ValueType const&);
 	std::pair<std::string, std::string> visit(NonValueType const&);
@@ -163,7 +161,59 @@ private:
 	std::pair<std::string, std::string> visit(ArrayType const&);
 	std::pair<std::string, std::string> visit(StructType const&);
 
-	// Utility functions
+	/// Convert a protobuf type @a _T into Solidity code to be placed
+	/// inside contract and test function scopes.
+	/// @param: _type (of parameterized type protobuf type T) is the type
+	/// of protobuf input to be converted.
+	/// @param: _isValueType is true if _type is a Solidity value type e.g., uint
+	/// and false otherwise e.g., string
+	/// @return: A pair of strings, first of which contains Solidity
+	/// code to be placed inside contract scope, second of which contains
+	/// Solidity code to be placed inside test function scope.
+	template <typename T>
+	std::pair<std::string, std::string> processType(T const& _type, bool _isValueType);
+
+	/// Convert a protobuf type @a _T into Solidity variable assignment and check
+	/// statements to be placed inside contract and test function scopes.
+	/// @param: _varName is the name of the Solidity variable
+	/// @param: _paramName is the name of the Solidity parameter that is passed
+	/// to the test function
+	/// @param: _type (of parameterized type protobuf type T) is the type
+	/// of protobuf input to be converted.
+	/// @return: A pair of strings, first of which contains Solidity
+	/// statements to be placed inside contract scope, second of which contains
+	/// Solidity statements to be placed inside test function scope.
+	template <typename T>
+	std::pair<std::string, std::string> assignChecker(
+		std::string const& _varName,
+		std::string const& _paramName,
+		T _type
+	);
+
+	/// Convert a protobuf type @a _T into Solidity variable declaration statement.
+	/// @param: _varName is the name of the Solidity variable
+	/// @param: _paramName is the name of the Solidity parameter that is passed
+	/// to the test function
+	/// @param: _type (of parameterized type protobuf type T) is the type
+	/// of protobuf input to be converted.
+	/// @param: _isValueType is a boolean that is true if _type is a
+	/// Solidity value type e.g., uint and false otherwise e.g., string
+	/// @param: _location is the Solidity location qualifier string to
+	/// be used inside variable declaration statements
+	/// @return: A pair of strings, first of which contains Solidity
+	/// variable declaration statement to be placed inside contract scope,
+	/// second of which contains Solidity variable declaration statement
+	/// to be placed inside test function scope.
+	template <typename T>
+	std::pair<std::string, std::string> varDecl(
+		std::string const& _varName,
+		std::string const& _paramName,
+		T _type,
+		bool _isValueType,
+		std::string const& _location
+	);
+
+	/// Appends a function parameter to the function parameter stream.
 	void appendTypedParams(
 		CalleeType _calleeType,
 		bool _isValueType,
@@ -172,6 +222,8 @@ private:
 		Delimiter _delimiter
 	);
 
+	/// Appends a function parameter to the public test function's
+	/// parameter stream.
 	void appendTypedParamsPublic(
 		bool _isValueType,
 		std::string const& _typeString,
@@ -179,6 +231,8 @@ private:
 		Delimiter _delimiter = Delimiter::ADD
 	);
 
+	/// Appends a function parameter to the external test function's
+	/// parameter stream.
 	void appendTypedParamsExternal(
 		bool _isValueType,
 		std::string const& _typeString,
@@ -186,32 +240,41 @@ private:
 		Delimiter _delimiter = Delimiter::ADD
 	);
 
+	/// Returns a Solidity variable declaration statement
+	/// @param _type: string containing Solidity type of the
+	/// variable to be declared.
+	/// @param _varName: string containing Solidity variable
+	/// name
+	/// @param _qualifier: string containing location where
+	/// the variable will be placed
 	std::string appendVarDeclToOutput(
 		std::string const& _type,
 		std::string const& _varName,
 		std::string const& _qualifier
 	);
 
+	/// Return checks that are encoded as Solidity if statements
+	/// as string
 	std::string equalityChecksAsString();
 
+	/// Return comma separated typed function parameters as string
 	std::string typedParametersAsString(CalleeType _calleeType);
 
+	/// Return Solidity helper functions as string
 	std::string helperFunctions();
 
+	/// Return top-level test code as string
 	std::string testCode(unsigned _invalidLength);
 
-	std::pair<std::string, unsigned> structDecl(StructType const& _type);
-
-	// Function definitions
-	// m_varCounter is used to derive declared and parameterized variable names
+	/// Return the next variable count that is used for
+	/// variable naming.
 	unsigned getNextVarCounter()
 	{
 		return m_varCounter++;
 	}
 
-	// Accepts an unsigned counter and returns a pair of strings
-	// First string is declared name (s_varNamePrefix<varcounter_value>)
-	// Second string is parameterized name (s_paramPrefix<varcounter_value>)
+	/// Return a pair of names for Solidity variable and the same variable when
+	/// passed as a function parameter.
 	static std::pair<std::string, std::string> newVarNames(unsigned _varCounter)
 	{
 		return std::make_pair(
@@ -220,11 +283,14 @@ private:
 		);
 	}
 
+	/// Checks if the last dynamically encoded Solidity type is right
+	/// padded, returning true if it is and false otherwise.
 	bool isLastDynParamRightPadded()
 	{
 		return m_isLastDynParamRightPadded;
 	}
 
+	/// Convert delimter to a comma or null string.
 	static std::string delimiterToString(Delimiter _delimiter);
 
 	/// Contains the test program
@@ -290,10 +356,7 @@ public:
 	};
 
 	/// Prefixes for declared and parameterized variable names
-	static auto constexpr s_varNamePrefix = "x_";
-	static auto constexpr s_paramNamePrefix = "c_";
 	static auto constexpr s_structNamePrefix = "S";
-	static auto constexpr s_structFieldPrefix = "m";
 
 	// Static function definitions
 	static bool isValueType(DataType _dataType)
@@ -699,6 +762,12 @@ public:
 
 	bool visit(ArrayType const& _type) override
 	{
+		// Mark array type as invalid in one of the following is true
+		//  - contains more than s_maxArrayDimensions dimensions
+		//  - contains an invalid base type, which happens in the
+		//  following cases
+		//    - array base type is invalid
+		//    - array base type is empty
 		m_arrayDimensions++;
 		if (m_arrayDimensions > s_maxArrayDimensions)
 			return false;
@@ -707,6 +776,9 @@ public:
 
 	bool visit(StructType const& _type) override
 	{
+		// A struct is marked invalid only if all of its fields
+		// are invalid. This is done to prevent an empty struct
+		// being defined (which is a Solidity error).
 		for (auto const& t: _type.t())
 			if (visit(t))
 				return true;
