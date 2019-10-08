@@ -1283,6 +1283,7 @@ string CompilerStack::computeSourceMapping(eth::AssemblyItems const& _items) con
 	int prevStart = -1;
 	int prevLength = -1;
 	int prevSourceIndex = -1;
+	size_t prevModifierDepth = -1;
 	char prevJump = 0;
 	for (auto const& item: _items)
 	{
@@ -1300,19 +1301,24 @@ string CompilerStack::computeSourceMapping(eth::AssemblyItems const& _items) con
 			jump = 'i';
 		else if (item.getJumpType() == eth::AssemblyItem::JumpType::OutOfFunction)
 			jump = 'o';
+		size_t modifierDepth = item.m_modifierDepth;
 
-		unsigned components = 4;
-		if (jump == prevJump)
+		unsigned components = 5;
+		if (modifierDepth == prevModifierDepth)
 		{
 			components--;
-			if (sourceIndex == prevSourceIndex)
+			if (jump == prevJump)
 			{
 				components--;
-				if (length == prevLength)
+				if (sourceIndex == prevSourceIndex)
 				{
 					components--;
-					if (location.start == prevStart)
+					if (length == prevLength)
+					{
 						components--;
+						if (location.start == prevStart)
+							components--;
+					}
 				}
 			}
 		}
@@ -1336,6 +1342,12 @@ string CompilerStack::computeSourceMapping(eth::AssemblyItems const& _items) con
 						ret += ':';
 						if (jump != prevJump)
 							ret += jump;
+						if (components-- > 0)
+						{
+							ret += ':';
+							if (modifierDepth != prevModifierDepth)
+								ret += to_string(modifierDepth);
+						}
 					}
 				}
 			}
@@ -1345,6 +1357,7 @@ string CompilerStack::computeSourceMapping(eth::AssemblyItems const& _items) con
 		prevLength = length;
 		prevSourceIndex = sourceIndex;
 		prevJump = jump;
+		prevModifierDepth = modifierDepth;
 	}
 	return ret;
 }
