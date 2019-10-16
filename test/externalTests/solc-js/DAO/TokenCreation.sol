@@ -150,6 +150,6 @@ contract TokenCreation is TokenCreationInterface, Token {
             return 30;
         }
     }
-    function() external payable {
+    receive() external payable {
     }
 }
