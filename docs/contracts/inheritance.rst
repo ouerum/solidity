@@ -176,6 +176,48 @@ virtual method lookup.
 
 .. _constructor:
 
+Function Overriding
+===================
+
+Base functions can be overridden by inheriting contracts to change their
+behavior. The overriding function must then use the ``override`` keyword in the
+function header as shown in this example::
+
+    pragma solidity >=0.5.0 <0.7.0;
+
+    contract Base
+    {
+        function foo() public {}
+    }
+
+    contract Inherited is Base
+    {
+        function foo() public override {}
+    }
+
+For multiple inheritance, all direct base contracts must be specified
+explicitly::
+
+    pragma solidity >=0.5.0 <0.7.0;
+
+    contract Base1
+    {
+        function foo() public {}
+    }
+
+    contract Base2
+    {
+        function foo() public {}
+    }
+
+    contract Inherited is Base1, Base2
+    {
+        function foo() public override(Base1, Base2) {}
+    }
+
+   .. index:: ! overriding;function
+
+
 Constructors
 ============
 
