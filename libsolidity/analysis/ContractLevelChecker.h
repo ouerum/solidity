@@ -107,7 +107,7 @@ private:
 
 	langutil::ErrorReporter& m_errorReporter;
 
-	/// Map of multisets containing all functions which can be overriden for the given contract.
+	/// Map of multisets containing all functions which can be overridden for the given contract.
 	std::map<ContractDefinition const*, FunctionSet> mutable m_contractBaseFunctions;
 	std::map<ContractDefinition const*, ModifierSet> mutable m_contractBaseModifiers;
 };
