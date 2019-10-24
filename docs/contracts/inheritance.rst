@@ -11,6 +11,7 @@ is called, except when the contract name is explicitly given or the
 ``super`` keyword is used.
 
 All functions overriding a base function must specify the ``override`` keyword.
+See :ref:`Function Overriding <function-overriding>` for more details.
 
 When a contract inherits from other contracts, only a single
 contract is created on the blockchain, and the code from all the base contracts
@@ -172,16 +173,18 @@ not known in the context of the class where it is used,
 although its type is known. This is similar for ordinary
 virtual method lookup.
 
-.. index:: ! constructor
+.. _function-overriding:
 
-.. _constructor:
+.. index:: ! overriding;function
 
 Function Overriding
 ===================
 
 Base functions can be overridden by inheriting contracts to change their
 behavior. The overriding function must then use the ``override`` keyword in the
-function header as shown in this example::
+function header as shown in this example:
+
+::
 
     pragma solidity >=0.5.0 <0.7.0;
 
@@ -195,8 +198,10 @@ function header as shown in this example::
         function foo() public override {}
     }
 
-For multiple inheritance, all direct base contracts must be specified
-explicitly::
+For multiple inheritance, all direct base contracts that define the same
+function must be specified explicitly:
+
+::
 
     pragma solidity >=0.5.0 <0.7.0;
 
@@ -215,8 +220,9 @@ explicitly::
         function foo() public override(Base1, Base2) {}
     }
 
-   .. index:: ! overriding;function
+.. index:: ! constructor
 
+.. _constructor:
 
 Constructors
 ============

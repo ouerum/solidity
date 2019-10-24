@@ -67,6 +67,9 @@ Function Modifiers
 Function modifiers can be used to amend the semantics of functions in a declarative way
 (see :ref:`modifiers` in the contracts section).
 
+A function modifier must have a unique name. Overloading, that is, having the
+same modifier name with different parameters, is not possible.
+
 ::
 
     pragma solidity >=0.4.22 <0.7.0;
@@ -85,6 +88,47 @@ Function modifiers can be used to amend the semantics of functions in a declarat
         function abort() public view onlySeller { // Modifier usage
             // ...
         }
+    }
+
+
+Function modifiers can override each other. This works similar as function
+overriding. The override keyword must be used in the overriding contract:
+
+::
+
+    pragma solidity >=0.5.0 <0.7.0;
+
+    contract Base
+    {
+        modifier foo() {_;}
+    }
+
+    contract Inherited is Base
+    {
+        modifier foo() override {_;}
+    }
+
+
+In case of multiple inheritance, all direct base contracts must be specified
+explicitly:
+
+::
+
+    pragma solidity >=0.5.0 <0.7.0;
+
+    contract Base1
+    {
+        modifier foo() {_;}
+    }
+
+    contract Base2
+    {
+        modifier foo() {_;}
+    }
+
+    contract Inherited is Base1, Base2
+    {
+        modifier foo() override(Base1, Base2) {_;}
     }
 
 .. _structure-events:

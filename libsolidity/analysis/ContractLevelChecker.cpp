@@ -703,9 +703,9 @@ void ContractLevelChecker::checkAmbiguousOverrides(ContractDefinition const& _co
 		m_errorReporter.typeError(
 			_contract.location(),
 			ssl,
-			"Functions of the same name " +
+			"Derived contract must override function " +
 			(*it)->name() +
-			" and parameter types defined in two or more base contracts must be overridden in the derived contract."
+			". Function with the same name and parameter types defined in two or more base classes."
 		);
 	}
 }

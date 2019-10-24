@@ -93,7 +93,7 @@ private:
 	void checkLibraryRequirements(ContractDefinition const& _contract);
 	/// Checks base contracts for ABI compatibility
 	void checkBaseABICompatibility(ContractDefinition const& _contract);
-	/// Checks for functions in different base contracts that conflict with each
+	/// Checks for functions in different base contracts which conflict with each
 	/// other and thus need to be overridden explicitly
 	void checkAmbiguousOverrides(ContractDefinition const& _contract) const;
 	/// Resolves an override list of UserDefinedTypeNames to a list of contracts
@@ -107,8 +107,7 @@ private:
 
 	langutil::ErrorReporter& m_errorReporter;
 
-	/// Map of multisets that contain all overridable functions for the given
-	/// contract
+	/// Map of multisets containing all functions which can be overriden for the given contract.
 	std::map<ContractDefinition const*, FunctionSet> mutable m_contractBaseFunctions;
 	std::map<ContractDefinition const*, ModifierSet> mutable m_contractBaseModifiers;
 };
