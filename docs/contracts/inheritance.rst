@@ -201,7 +201,8 @@ function header as shown in this example:
     }
 
 For multiple inheritance, the most derived base contracts that defines the same
-function must be specified explicitly:
+function must be specified explicitly. Additionally, the contract deriving from multiple bases
+defining the same function must explicitly override those functions:
 
 ::
 
@@ -219,6 +220,8 @@ function must be specified explicitly:
 
     contract Inherited is Base1, Base2
     {
+        // Derives from multiple bases defining foo(), so we must explicitly
+        // override it
         function foo() public override(Base1, Base2) {}
     }
 
