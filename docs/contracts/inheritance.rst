@@ -193,12 +193,14 @@ function header as shown in this example:
         function foo() public {}
     }
 
-    contract Inherited is Base
+    contract Middle is Base {}
+
+    contract Inherited is Middle
     {
         function foo() public override {}
     }
 
-For multiple inheritance, all direct base contracts that define the same
+For multiple inheritance, the most derived base contracts that defines the same
 function must be specified explicitly:
 
 ::
