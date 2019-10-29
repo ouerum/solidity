@@ -11,7 +11,7 @@ Breaking changes:
  * Standard JSON Interface: Add option to disable or choose hash method between IPFS and Swarm for the bytecode metadata.
  * Syntax: ``push(element)`` for dynamic storage arrays do not return the new length anymore.
  * Type checker: Resulting type of exponentiation is equal to the type of the base. Also allow signed types for the base.
- * Language Feature: When overriding a function or modifier, the new keyword ``override`` must now be used. When overriding a function or modifier defined in different bases, all bases must be listed in braces after the keyword like so: ``override(base1, base2)``
+ * Language Feature: When overriding a function or modifier, the new keyword ``override`` must be used. When overriding a function or modifier defined in multiple parallel bases, all bases must be listed in parentheses after the keyword like so: ``override(base1, base2)``
 
 
 Language Features:
