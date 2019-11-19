@@ -117,6 +117,7 @@ static string const g_strStrictAssembly = "strict-assembly";
 static string const g_strPrettyJson = "pretty-json";
 static string const g_strVersion = "version";
 static string const g_strIgnoreMissingFiles = "ignore-missing";
+static string const g_strCfg = "cfg-annotation";
 
 static string const g_argAbi = g_strAbi;
 static string const g_argPrettyJson = g_strPrettyJson;
@@ -154,6 +155,7 @@ static string const g_argStrictAssembly = g_strStrictAssembly;
 static string const g_argVersion = g_strVersion;
 static string const g_stdinFileName = g_stdinFileNameStr;
 static string const g_argIgnoreMissingFiles = g_strIgnoreMissingFiles;
+static string const g_argCfg = g_strCfg;
 
 /// Possible arguments to for --combined-json
 static set<string> const g_combinedJsonArgs
@@ -215,6 +217,7 @@ static bool needsHumanTargetedStdout(po::variables_map const& _args)
 		g_argAstJson,
 		g_argBinary,
 		g_argBinaryRuntime,
+		g_argCfg,
 		g_argCloneBinary,
 		g_argFormal,
 		g_argMetadata,
@@ -399,6 +402,19 @@ void CommandLineInterface::handleGasEstimation(string const& _contract)
 		}
 	}
 }
+
+
+void CommandLineInterface::handleCFGAnnotation(std::string const &_contract)
+{
+    if (!m_args.count(g_argCfg))
+        return;
+    string data = m_compiler->cfgAnnotation(_contract);
+    if (m_args.count(g_argOutputDir))
+        createFile(m_compiler->filesystemFriendlyName(_contract) + ".cfg_annotation", data);
+    else
+        cout << "Contract CFG Annotation " << endl << data << endl;
+}
+
 
 bool CommandLineInterface::readInputFilesAndConfigureRemappings()
 {
@@ -633,6 +649,7 @@ Allowed options)",
 		(g_argBinaryRuntime.c_str(), "Binary of the runtime part of the contracts in hex.")
 		(g_argCloneBinary.c_str(), "Binary of the clone contracts in hex.")
 		(g_argAbi.c_str(), "ABI specification of the contracts.")
+		(g_argCfg.c_str(), "Cfg annotation of the contract")
 		(g_argSignatureHashes.c_str(), "Function signature hashes of the contracts.")
 		(g_argNatspecUser.c_str(), "Natspec user documentation of all contracts.")
 		(g_argNatspecDev.c_str(), "Natspec developer documentation of all contracts.")
@@ -1230,6 +1247,7 @@ void CommandLineInterface::outputCompilationResults()
 		handleSignatureHashes(contract);
 		handleMetadata(contract);
 		handleABI(contract);
+		handleCFGAnnotation(contract);
 		handleNatspec(true, contract);
 		handleNatspec(false, contract);
 	} // end of contracts iteration

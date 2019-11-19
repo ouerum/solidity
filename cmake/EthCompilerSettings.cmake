@@ -42,6 +42,7 @@ if (("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" MA
 	#
 	# TODO - Track down what breaks if we do NOT do this.
 	add_compile_options(-Wno-unknown-pragmas)
+	add_compile_options(-Wno-unused-variable)
 
 	# Configuration-specific compiler settings.
 	set(CMAKE_CXX_FLAGS_DEBUG          "-O0 -g -DETH_DEBUG")

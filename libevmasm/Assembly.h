@@ -34,6 +34,7 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
+#include <libcfg/binaryCFG.h>
 
 namespace dev
 {
@@ -53,7 +54,7 @@ public:
 	AssemblyItem namedTag(std::string const& _name);
 	AssemblyItem newData(bytes const& _data) { h256 h(dev::keccak256(asString(_data))); m_data[h] = _data; return AssemblyItem(PushData, h); }
 	AssemblyItem newSub(AssemblyPointer const& _sub) { m_subs.push_back(_sub); return AssemblyItem(PushSub, m_subs.size() - 1); }
-	Assembly const& sub(size_t _sub) const { return *m_subs.at(_sub); }
+	const Assembly sub(size_t _sub) const { return *m_subs.at(_sub); }
 	Assembly& sub(size_t _sub) { return *m_subs.at(_sub); }
 	AssemblyItem newPushString(std::string const& _data) { h256 h(dev::keccak256(_data)); m_strings[h] = _data; return AssemblyItem(PushString, h); }
 	AssemblyItem newPushSubSize(u256 const& _subId) { return AssemblyItem(PushSubSize, _subId); }
@@ -69,10 +70,10 @@ public:
 	void appendProgramSize() { append(AssemblyItem(PushProgramSize)); }
 	void appendLibraryAddress(std::string const& _identifier) { append(newPushLibraryAddress(_identifier)); }
 
-	AssemblyItem appendJump() { auto ret = append(newPushTag()); append(solidity::Instruction::JUMP); return ret; }
-	AssemblyItem appendJumpI() { auto ret = append(newPushTag()); append(solidity::Instruction::JUMPI); return ret; }
-	AssemblyItem appendJump(AssemblyItem const& _tag) { auto ret = append(_tag.pushTag()); append(solidity::Instruction::JUMP); return ret; }
-	AssemblyItem appendJumpI(AssemblyItem const& _tag) { auto ret = append(_tag.pushTag()); append(solidity::Instruction::JUMPI); return ret; }
+	AssemblyItem appendJump() { auto ret = append(newPushTag()); append(solidity::Instruction::JUMP); m_annotation.appendJumptarget(m_items.size()-1, ret.data()); return ret; }
+	AssemblyItem appendJumpI() { auto ret = append(newPushTag()); append(solidity::Instruction::JUMPI); m_annotation.appendJumptarget(m_items.size()-1, ret.data()); return ret; }
+	AssemblyItem appendJump(AssemblyItem const& _tag) { auto ret = append(_tag.pushTag()); append(solidity::Instruction::JUMP); m_annotation.appendJumptarget(m_items.size()-1, _tag.data()); return ret; }
+	AssemblyItem appendJumpI(AssemblyItem const& _tag) { auto ret = append(_tag.pushTag()); append(solidity::Instruction::JUMPI); m_annotation.appendJumptarget(m_items.size()-1, _tag.data()); return ret; }
 
 	/// Adds a subroutine to the code (in the data section) and pushes its size (via a tag)
 	/// on the stack. @returns the pushsub assembly item.
@@ -140,6 +141,9 @@ public:
 		StringMap const& _sourceCodes = StringMap()
 	) const;
 
+	void appendFunctionEntryAnnotation(Declaration const& _function, AssemblyItem const& _tag) {m_annotation.appendFunctiontag(&_function, _tag.data());}
+    void appendJumpRetTarget(AssemblyItem const& tag){m_annotation.appendJumptarget(m_items.size()-1, tag.data());}
+
 protected:
 	/// Does the same operations as @a optimise, but should only be applied to a sub and
 	/// returns the replaced tags. Also takes an argument containing the tags of this assembly
@@ -170,6 +174,21 @@ protected:
 	int m_deposit = 0;
 
 	SourceLocation m_currentSourceLocation;
+
+	cfg::Annotation m_annotation;
+
+    std::vector<std::vector<cfg::OptimizedAnnotation>> m_optimizedAnnotations;
+
+    AssemblyItems source_items;
+public:
+    const cfg::Annotation &getMAnnotation() const;
+
+    const std::vector<std::vector<cfg::OptimizedAnnotation>> &getMOptimizedAnnotations() const;
+
+    const AssemblyItems &getSourceItems() const;
+    // before optimized
+
+    std::string AnnotationString() const;
 };
 
 inline std::ostream& operator<<(std::ostream& _out, Assembly const& _a)

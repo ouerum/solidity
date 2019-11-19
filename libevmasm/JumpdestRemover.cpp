@@ -22,6 +22,7 @@
 #include "JumpdestRemover.h"
 
 #include <libevmasm/AssemblyItem.h>
+#include <libcfg/binaryCFG.h>
 
 using namespace std;
 using namespace dev::eth;
@@ -49,6 +50,10 @@ bool JumpdestRemover::optimise(set<size_t> const& _tagsReferencedFromOutside)
 		}
 	);
 	m_items.erase(pend, m_items.end());
+	cfg::OptimzedItem optimzedItem = cfg::OptimzedItem(pend-m_items.begin(), m_items.end()-m_items.begin());
+	cfg::OptimizedAnnotation optimizedAnnotation = cfg::OptimizedAnnotation(0, "erase", optimzedItem);
+    m_optimizedAnnotations.push_back(optimizedAnnotation);
+
 	return m_items.size() != initialSize;
 }
 
@@ -63,4 +68,8 @@ set<size_t> JumpdestRemover::referencedTags(AssemblyItems const& _items, size_t 
 				ret.insert(subAndTag.second);
 		}
 	return ret;
+}
+
+const vector<cfg::OptimizedAnnotation> &JumpdestRemover::getMOptimizedAnnotations() const {
+    return m_optimizedAnnotations;
 }

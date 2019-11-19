@@ -1054,3 +1054,11 @@ Json::Value CompilerStack::gasEstimates(string const& _contractName) const
 
 	return output;
 }
+
+std::string CompilerStack::cfgAnnotation(std::string const &_contractName) const {
+    Contract const& currentContract = contract(_contractName);
+    if (currentContract.compiler)
+        return currentContract.compiler->runtimeCFGAnnotation();
+    else
+        return "";
+}

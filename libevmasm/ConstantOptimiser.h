@@ -28,6 +28,7 @@
 #include <libdevcore/Assertions.h>
 #include <libdevcore/CommonData.h>
 #include <libdevcore/CommonIO.h>
+#include <libcfg/binaryCFG.h>
 
 #include <vector>
 
@@ -54,7 +55,8 @@ public:
 		size_t _runs,
 		solidity::EVMVersion _evmVersion,
 		Assembly& _assembly,
-		AssemblyItems& _items
+		AssemblyItems& _items,
+        std::vector<cfg::OptimizedAnnotation>& _optimizedAnnotation
 	);
 
 	struct Params
@@ -96,7 +98,8 @@ protected:
 	}
 
 	/// Replaces all constants i by the code given in @a _replacement[i].
-	static void replaceConstants(AssemblyItems& _items, std::map<u256, AssemblyItems> const& _replacements);
+	static void replaceConstants(AssemblyItems& _items, std::map<u256, AssemblyItems> const& _replacements,
+                                 std::vector<cfg::OptimizedAnnotation>& _optimizedAnnotation);
 
 	Params m_params;
 	u256 const& m_value;

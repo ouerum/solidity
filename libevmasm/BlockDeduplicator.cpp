@@ -91,7 +91,7 @@ bool BlockDeduplicator::deduplicate()
 				m_replacedTags[m_items.at(i).data()] = m_items.at(*it).data();
 		}
 
-		if (!applyTagReplacement(m_items, m_replacedTags))
+		if (!applyTagReplacement(m_items, m_replacedTags, m_optimizedAnnotation))
 			break;
 	}
 	return iterations > 0;
@@ -100,27 +100,38 @@ bool BlockDeduplicator::deduplicate()
 bool BlockDeduplicator::applyTagReplacement(
 	AssemblyItems& _items,
 	map<u256, u256> const& _replacements,
+	std::vector<cfg::OptimizedAnnotation> optimizedAnnotations,
 	size_t _subId
 )
 {
 	bool changed = false;
-	for (AssemblyItem& item: _items)
-		if (item.type() == PushTag)
-		{
-			size_t subId;
-			size_t tagId;
-			tie(subId, tagId) = item.splitForeignPushTag();
-			if (subId != _subId)
-				continue;
-			auto it = _replacements.find(tagId);
-			if (it != _replacements.end())
-			{
-				changed = true;
-				item.setPushTagSubIdAndTag(subId, size_t(it->second));
-			}
-		}
+	for (AssemblyItem& item: _items) {
+        if (item.type() == PushTag) {
+            size_t subId;
+            size_t tagId;
+            tie(subId, tagId) = item.splitForeignPushTag();
+            if (subId != _subId)
+                continue;
+            auto it = _replacements.find(tagId);
+            if (it != _replacements.end()) {
+                changed = true;
+                item.setPushTagSubIdAndTag(subId, size_t(it->second));
+                AssemblyItems tmp;
+                copy(&item, &item, back_inserter(tmp));
+                unsigned pos = &item - &_items[0];
+                cfg::OptimzedItem optimzedItem = cfg::OptimzedItem(pos, pos, tmp);
+                cfg::OptimizedAnnotation optimizedAnnotation = cfg::OptimizedAnnotation(2, "replace", optimzedItem);
+                optimizedAnnotations.push_back(optimizedAnnotation);
+            }
+        }
+    }
 	return changed;
 }
+
+const vector<cfg::OptimizedAnnotation> &BlockDeduplicator::getMOptimizedAnnotation() const {
+    return m_optimizedAnnotation;
+}
+
 
 BlockDeduplicator::BlockIterator& BlockDeduplicator::BlockIterator::operator++()
 {

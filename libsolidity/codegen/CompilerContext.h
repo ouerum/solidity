@@ -251,6 +251,8 @@ public:
 			ScopeGuard([&]{ _compilerContext.popVisitedNodes(); }) { _compilerContext.pushVisitedNodes(&_node); }
 	};
 
+	void appendJumpIntoAnnotation(eth::AssemblyItem const& _item){m_asm->appendJumpRetTarget(_item);}
+
 private:
 	/// Searches the inheritance hierarchy towards the base starting from @a _searchStart and returns
 	/// the first function definition that is overwritten by _function.

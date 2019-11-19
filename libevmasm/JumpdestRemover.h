@@ -23,6 +23,7 @@
 #include <vector>
 #include <cstddef>
 #include <set>
+#include <libcfg/binaryCFG.h>
 
 namespace dev
 {
@@ -42,8 +43,12 @@ public:
 	/// from the given list of items.
 	static std::set<size_t> referencedTags(AssemblyItems const& _items, size_t _subId);
 
+    const std::vector<cfg::OptimizedAnnotation> &getMOptimizedAnnotations() const;
+
 private:
 	AssemblyItems& m_items;
+
+    std::vector<cfg::OptimizedAnnotation> m_optimizedAnnotations;
 };
 
 }

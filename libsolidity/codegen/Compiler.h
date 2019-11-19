@@ -81,6 +81,11 @@ public:
 	/// UndefinedItem if it does not exist yet.
 	eth::AssemblyItem functionEntryLabel(FunctionDefinition const& _function) const;
 
+	std::string runtimeCFGAnnotation() const
+    {
+	    return m_context.assembly().sub(m_runtimeSub).AnnotationString();
+    }
+
 private:
 	bool const m_optimize;
 	unsigned const m_optimizeRuns;
