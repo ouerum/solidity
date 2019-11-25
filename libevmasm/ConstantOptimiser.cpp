@@ -127,7 +127,7 @@ void ConstantOptimisationMethod::replaceConstants(
 			{
 				replaced += it->second;
                 AssemblyItems tmp;
-                copy(&item, &item, back_inserter(tmp));
+                copy((it->second).begin(), (it->second).end(), back_inserter(tmp));
                 cfg::OptimzedItem optimzedItem = cfg::OptimzedItem(&item - &_items[0], &item - &_items[0], tmp);
                 cfg::OptimizedAnnotation optimizedAnnotation = cfg::OptimizedAnnotation(4, "replace", optimzedItem);
                 _optimizedAnnotation.push_back(optimizedAnnotation);

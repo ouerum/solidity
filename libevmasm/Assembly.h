@@ -143,6 +143,7 @@ public:
 
 	void appendFunctionEntryAnnotation(Declaration const& _function, AssemblyItem const& _tag) {m_annotation.appendFunctiontag(&_function, _tag.data());}
     void appendJumpRetTarget(AssemblyItem const& tag){m_annotation.appendJumptarget(m_items.size()-1, tag.data());}
+    void appendJumpTarget(unsigned index) {AssemblyItem tag = m_items.at(index);  m_annotation.appendJumptarget(m_items.size()-1, tag.data());}
 
 protected:
 	/// Does the same operations as @a optimise, but should only be applied to a sub and

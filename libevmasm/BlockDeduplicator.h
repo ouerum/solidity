@@ -59,7 +59,7 @@ public:
 	static bool applyTagReplacement(
 		AssemblyItems& _items,
 		std::map<u256, u256> const& _replacements,
-		std::vector<cfg::OptimizedAnnotation> optimizedAnnotations,
+		std::vector<cfg::OptimizedAnnotation> &optimizedAnnotations,
 		size_t _subID = size_t(-1)
 	);
 

@@ -93,7 +93,9 @@ public:
 	}
 	virtual void appendJump(int _stackDiffAfter) override
 	{
-		appendInstruction(solidity::Instruction::JUMP);
+        unsigned jumpTag_index = m_assembly.items().size() - 1;
+	    appendInstruction(solidity::Instruction::JUMP);
+        m_assembly.appendJumpTarget(jumpTag_index);
 		m_assembly.adjustDeposit(_stackDiffAfter);
 	}
 	virtual void appendJumpTo(LabelID _labelId, int _stackDiffAfter) override
@@ -104,7 +106,9 @@ public:
 	virtual void appendJumpToIf(LabelID _labelId) override
 	{
 		appendLabelReference(_labelId);
+		unsigned jumpTag_index = m_assembly.items().size() - 1;
 		appendInstruction(solidity::Instruction::JUMPI);
+		m_assembly.appendJumpTarget(jumpTag_index);
 	}
 	virtual void appendBeginsub(LabelID, int) override
 	{

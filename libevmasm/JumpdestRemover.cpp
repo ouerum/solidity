@@ -35,6 +35,20 @@ bool JumpdestRemover::optimise(set<size_t> const& _tagsReferencedFromOutside)
 	references.insert(_tagsReferencedFromOutside.begin(), _tagsReferencedFromOutside.end());
 
 	size_t initialSize = m_items.size();
+
+    for(auto iter = m_items.begin(); iter!=m_items.end(); iter++){
+        if(iter->type() == Tag){
+            auto asmIdAndTag = iter->splitForeignPushTag();
+            assertThrow(asmIdAndTag.first == size_t(-1), OptimizerException, "Sub-assembly tag used as label.");
+            size_t tag = asmIdAndTag.second;
+            if(!references.count(tag)){
+                cfg::OptimzedItem optimzedItem = cfg::OptimzedItem(iter-m_items.begin(), iter-m_items.begin());
+                cfg::OptimizedAnnotation optimizedAnnotation = cfg::OptimizedAnnotation(0, "erase", optimzedItem);
+                m_optimizedAnnotations.push_back(optimizedAnnotation);
+            }
+        }
+    }
+
 	/// Remove tags which are never referenced.
 	auto pend = remove_if(
 		m_items.begin(),
@@ -49,10 +63,8 @@ bool JumpdestRemover::optimise(set<size_t> const& _tagsReferencedFromOutside)
 			return !references.count(tag);
 		}
 	);
-	m_items.erase(pend, m_items.end());
-	cfg::OptimzedItem optimzedItem = cfg::OptimzedItem(pend-m_items.begin(), m_items.end()-m_items.begin());
-	cfg::OptimizedAnnotation optimizedAnnotation = cfg::OptimizedAnnotation(0, "erase", optimzedItem);
-    m_optimizedAnnotations.push_back(optimizedAnnotation);
+
+    m_items.erase(pend, m_items.end());
 
 	return m_items.size() != initialSize;
 }

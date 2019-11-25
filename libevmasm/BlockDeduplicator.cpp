@@ -87,8 +87,37 @@ bool BlockDeduplicator::deduplicate()
 			auto it = blocksSeen.find(i);
 			if (it == blocksSeen.end())
 				blocksSeen.insert(i);
-			else
-				m_replacedTags[m_items.at(i).data()] = m_items.at(*it).data();
+			else {
+                m_replacedTags[m_items.at(i).data()] = m_items.at(*it).data();
+                AssemblyItem pushFirstTag(pushSelf);
+                AssemblyItem pushSecondTag(pushSelf);
+
+                size_t _i = i;
+                size_t _j = *it;
+                if (_i < m_items.size() && m_items.at(_i).type() == Tag)
+                    pushFirstTag = m_items.at(_i).pushTag();
+                if (_j < m_items.size() && m_items.at(_j).type() == Tag)
+                    pushSecondTag = m_items.at(_j).pushTag();
+
+                BlockIterator first(m_items.begin() + _i, m_items.end(), &pushFirstTag, &pushSelf);
+                BlockIterator second(m_items.begin() + _j, m_items.end(), &pushSecondTag, &pushSelf);
+                BlockIterator end(m_items.end(), m_items.end());
+
+                if (first != end && (*first).type() == Tag)
+                    ++first;
+                if (second != end && (*second).type() == Tag)
+                    ++second;
+
+                AssemblyItems first_tmp;
+                AssemblyItems second_tmp;
+                for(auto iter = first; iter!=end; ++iter){
+                    first_tmp.push_back(*iter);
+                }
+                for(auto iter = second; iter!=end; ++iter){
+                    second_tmp.push_back(*iter);
+                }
+                int k = 11;
+            }
 		}
 
 		if (!applyTagReplacement(m_items, m_replacedTags, m_optimizedAnnotation))
@@ -100,7 +129,7 @@ bool BlockDeduplicator::deduplicate()
 bool BlockDeduplicator::applyTagReplacement(
 	AssemblyItems& _items,
 	map<u256, u256> const& _replacements,
-	std::vector<cfg::OptimizedAnnotation> optimizedAnnotations,
+	std::vector<cfg::OptimizedAnnotation> & optimizedAnnotations,
 	size_t _subId
 )
 {
@@ -117,7 +146,7 @@ bool BlockDeduplicator::applyTagReplacement(
                 changed = true;
                 item.setPushTagSubIdAndTag(subId, size_t(it->second));
                 AssemblyItems tmp;
-                copy(&item, &item, back_inserter(tmp));
+                copy(&item, &item+1, back_inserter(tmp));
                 unsigned pos = &item - &_items[0];
                 cfg::OptimzedItem optimzedItem = cfg::OptimzedItem(pos, pos, tmp);
                 cfg::OptimizedAnnotation optimizedAnnotation = cfg::OptimizedAnnotation(2, "replace", optimzedItem);

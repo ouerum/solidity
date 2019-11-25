@@ -480,12 +480,12 @@ map<u256, u256> Assembly::optimiseInternal(
 				if (shouldReplace)
 				{
 					count++;
-					optimisedItems += optimisedChunk;
                     AssemblyItems tmp;
                     copy(optimisedChunk.begin(), optimisedChunk.end(), back_inserter(tmp));
-                    cfg::OptimzedItem optimzedItem = cfg::OptimzedItem(iter-m_items.begin(), orig-m_items.begin(), tmp);
+                    cfg::OptimzedItem optimzedItem = cfg::OptimzedItem(orig-m_items.begin(), iter-m_items.begin()-1, tmp);
                     cfg::OptimizedAnnotation optimizedAnnotation = cfg::OptimizedAnnotation(3, "replace", optimzedItem);
                     cse_opt_annotation.push_back(optimizedAnnotation);
+					optimisedItems += optimisedChunk;
 				}
 				else
 					copy(orig, iter, back_inserter(optimisedItems));
