@@ -863,8 +863,10 @@ void ArrayUtils::clearStorageLoop(TypePointer const& _type) const
 			_context << Instruction::POP << Instruction::SWAP1;
 			// "return"
 			_context << Instruction::JUMP;
-
+            unsigned jump_index = _context.assembly().items().size()-1;
 			_context << returnTag;
+            unsigned tag_index = _context.assembly().items().size()-1;
+            _context.appendJumpAnnotattion_low(jump_index, tag_index);
 			solAssert(_context.stackHeight() == stackHeightStart - 1, "");
 		}
 	);

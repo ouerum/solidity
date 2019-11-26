@@ -252,6 +252,7 @@ public:
 	};
 
 	void appendJumpIntoAnnotation(eth::AssemblyItem const& _item){m_asm->appendJumpRetTarget(_item);}
+	void appendJumpAnnotattion_low(unsigned jump_index, unsigned tag_index) {m_asm->appendJumpTarget(jump_index, tag_index);}
 
 private:
 	/// Searches the inheritance hierarchy towards the base starting from @a _searchStart and returns

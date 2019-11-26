@@ -82,6 +82,7 @@ void CompilerContext::callLowLevelFunction(
 	*this << lowLevelFunctionTag(_name, _inArgs, _outArgs, _generator);
 
 	appendJump(eth::AssemblyItem::JumpType::IntoFunction);
+    m_asm->appendJumpRetTarget(retTag.data());
 	adjustStackOffset(int(_outArgs) - 1 - _inArgs);
 	*this << retTag.tag();
 }
