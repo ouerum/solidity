@@ -436,8 +436,8 @@ map<u256, u256> Assembly::optimiseInternal(
 			BlockDeduplicator dedup(m_items);
 			if (dedup.deduplicate())
 			{
-                std::vector<cfg::OptimizedAnnotation> dedup_opt_annotation = dedup.getMOptimizedAnnotation();
-                m_optimizedAnnotations.push_back(dedup_opt_annotation);
+                std::vector<std::vector<cfg::OptimizedAnnotation>> dedup_opt_annotation = dedup.getMOptimizedAnnotations();
+                m_optimizedAnnotations.insert(m_optimizedAnnotations.end(), dedup_opt_annotation.begin(), dedup_opt_annotation.end());
 			    tagReplacements.insert(dedup.replacedTags().begin(), dedup.replacedTags().end());
 				count++;
 			}

@@ -90,9 +90,11 @@ private:
 	std::map<u256, u256> m_replacedTags;
 	AssemblyItems& m_items;
 
-    std::vector<cfg::OptimizedAnnotation> m_optimizedAnnotation;
+    std::vector<std::vector<cfg::OptimizedAnnotation>> m_optimizedAnnotations;
 public:
-    const std::vector<cfg::OptimizedAnnotation> &getMOptimizedAnnotation() const;
+    const std::vector<std::vector<cfg::OptimizedAnnotation>> &getMOptimizedAnnotations() const;
+
+public:
 
 };
 
