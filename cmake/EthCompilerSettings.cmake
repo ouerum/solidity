@@ -34,7 +34,7 @@ if (("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" MA
 	# to fix warnings as they arise, so they don't accumulate "to be fixed later".
 	add_compile_options(-Wall)
 	add_compile_options(-Wextra)
-	add_compile_options(-Werror)
+#	add_compile_options(-Werror)
 
 	# Disable warnings about unknown pragmas (which is enabled by -Wall).  I assume we have external
 	# dependencies (probably Boost) which have some of these.   Whatever the case, we shouldn't be
@@ -42,7 +42,7 @@ if (("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" MA
 	#
 	# TODO - Track down what breaks if we do NOT do this.
 	add_compile_options(-Wno-unknown-pragmas)
-	add_compile_options(-Wno-unused-variable)
+#	add_compile_options(-Wno-unused-variable)
 
 	# Configuration-specific compiler settings.
 	set(CMAKE_CXX_FLAGS_DEBUG          "-O0 -g -DETH_DEBUG")
