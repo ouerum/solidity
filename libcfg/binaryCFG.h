@@ -15,36 +15,15 @@
 namespace dev {
     namespace cfg {
 
-
-        struct BasicBlock {
-            unsigned begin = 0;
-            unsigned end = 0;
-
-            std::vector<unsigned> next;
-        };
-
-        using BasicBlocks = std::vector<BasicBlock>;
-
-        class FunctionControlFlowGraph {
-        public:
-            void appendBlock(unsigned _block_id, unsigned start_index, unsigned end_index);
-
-            void appendEdge(unsigned src, unsigned tgt);
-
-            unsigned gernarateBlockId() { return m_lastUsedId++; }
-
-        private:
-            unsigned m_lastUsedId = 0;
-            std::map<unsigned, BasicBlock> m_blocks;
-        };
-
         class Annotation {
         private:
             std::map<unsigned, u256> m_jumptarget;
             std::map<Declaration const*, u256> m_function_entry;
+            std::map<u256,u256> m_public_function_entry;
         public:
             void appendJumptarget(unsigned item_index, const u256& tag) { m_jumptarget[item_index] = tag;}
             void appendFunctiontag(Declaration const* _function, const u256& tag) {m_function_entry[_function] = tag;}
+            void appendPublicFunctiontag(const u256& tag1, const u256& tag2) {m_public_function_entry[tag1] = tag2;}
             std::string printJumpTgt() const{
                 std::string result = "";
                 auto iter = m_jumptarget.begin();
@@ -63,6 +42,15 @@ namespace dev {
                 }
                 return result;
             }
+            std::string printPublicFunctionEntry() const{
+                std::string result = "";
+                auto iter = m_public_function_entry.begin();
+                for(;iter!=m_public_function_entry.end();iter++){
+                    result += std::string(iter->first) + '\t' + std::string(iter->second);
+                    result += "\n";
+                }
+                return result;
+            };
         };
 
         struct OptimzedItem{

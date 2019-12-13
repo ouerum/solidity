@@ -716,6 +716,8 @@ std::string Assembly::AnnotationString() const {
     str += "====\n";
     str += m_annotation.printFunctionEntry();
     str += "====\n";
+    str += m_annotation.printPublicFunctionEntry();
+    str += "====\n";
     str += m_annotation.printJumpTgt();
     str += "====\n";
     auto iter1 = m_optimizedAnnotations.begin();

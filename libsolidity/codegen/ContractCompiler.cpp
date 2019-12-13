@@ -361,6 +361,7 @@ void ContractCompiler::appendFunctionSelector(ContractDefinition const& _contrac
 			CompilerUtils(m_context).abiDecode(functionType->parameterTypes());
 		}
 		m_context.appendJumpTo(m_context.functionEntryLabel(functionType->declaration()));
+        m_context.appendPublicEntry(callDataUnpackerEntryPoints.at(it.first) ,m_context.functionEntryLabel(functionType->declaration()));
 		m_context << returnTag;
 		// Return tag and input parameters get consumed.
 		m_context.adjustStackOffset(
