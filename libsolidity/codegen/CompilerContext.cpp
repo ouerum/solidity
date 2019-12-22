@@ -67,7 +67,7 @@ void CompilerContext::startFunction(Declaration const& _function)
     eth::AssemblyItem function_entry = functionEntryLabel(_function);
 	*this << function_entry;
 	if(!_function.name().empty() && !_function.isPublic())
-	    m_asm->appendFunctionEntryAnnotation(_function, function_entry);
+	    m_asm->appendFunctionEntryAnnotation(function_entry);
 }
 
 void CompilerContext::callLowLevelFunction(
@@ -119,7 +119,9 @@ void CompilerContext::appendMissingLowLevelFunctions()
 		m_lowLevelFunctionGenerationQueue.pop();
 
 		setStackOffset(inArgs + 1);
+
 		*this << m_lowLevelFunctions.at(name).tag();
+        m_asm->appendFunctionEntryAnnotation(m_lowLevelFunctions.at(name).tag());
 		generator(*this);
 		CompilerUtils(*this).moveToStackTop(outArgs);
 		appendJump(eth::AssemblyItem::JumpType::OutOfFunction);

@@ -315,6 +315,7 @@ void ContractCompiler::appendFunctionSelector(ContractDefinition const& _contrac
 	m_context.appendJumpTo(notFound);
 
 	m_context << notFound;
+	m_context.setFallBack(notFound);
 	if (fallback)
 	{
 		solAssert(!_contract.isLibrary(), "");

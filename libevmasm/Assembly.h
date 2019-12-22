@@ -141,8 +141,9 @@ public:
 		StringMap const& _sourceCodes = StringMap()
 	) const;
 
-	void appendFunctionEntryAnnotation(Declaration const& _function, AssemblyItem const& _tag) {m_annotation.appendFunctiontag(&_function, _tag.data());}
+	void appendFunctionEntryAnnotation(AssemblyItem const& _tag) {m_annotation.appendFunctiontag(_tag.data());}
 	void appendPublicFunctionEntryAnnotation(AssemblyItem const& _tag1, AssemblyItem const& _tag2) {m_annotation.appendPublicFunctiontag(_tag1.data(),_tag2.data());}
+	void appendFallBackEntryAnnotation(AssemblyItem const& _tag) {m_annotation.setFallBackFunctionEntry(_tag.data());}
     void appendJumpRetTarget(AssemblyItem const& tag){m_annotation.appendJumptarget(m_items.size()-1, tag.data());}
     void appendJumpTarget(unsigned index) {AssemblyItem tag = m_items.at(index);  m_annotation.appendJumptarget(m_items.size()-1, tag.data());}
     void appendJumpTarget(unsigned jump_index, unsigned tag_index) {AssemblyItem tag = m_items.at(tag_index);  m_annotation.appendJumptarget(jump_index, tag.data());}

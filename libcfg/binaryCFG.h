@@ -18,12 +18,18 @@ namespace dev {
         class Annotation {
         private:
             std::map<unsigned, u256> m_jumptarget;
-            std::map<Declaration const*, u256> m_function_entry;
+            std::vector<u256> m_function_entry;
             std::map<u256,u256> m_public_function_entry;
+            u256 fall_back_function_entry;
         public:
             void appendJumptarget(unsigned item_index, const u256& tag) { m_jumptarget[item_index] = tag;}
-            void appendFunctiontag(Declaration const* _function, const u256& tag) {m_function_entry[_function] = tag;}
+            void appendFunctiontag(const u256& tag) {m_function_entry.push_back(tag);}
             void appendPublicFunctiontag(const u256& tag1, const u256& tag2) {m_public_function_entry[tag1] = tag2;}
+
+            void setFallBackFunctionEntry(const u256 &fallBackFunctionEntry) {
+                fall_back_function_entry = fallBackFunctionEntry;
+            }
+
             std::string printJumpTgt() const{
                 std::string result = "";
                 auto iter = m_jumptarget.begin();
@@ -37,7 +43,7 @@ namespace dev {
                 std::string result = "";
                 auto iter = m_function_entry.begin();
                 for(;iter!=m_function_entry.end();iter++){
-                    result += std::string(iter->second);
+                    result += std::string(*iter);
                     result += "\n";
                 }
                 return result;
@@ -51,6 +57,11 @@ namespace dev {
                 }
                 return result;
             };
+
+            std::string printFallBack() const{
+                return std::string(fall_back_function_entry) + '\n';
+            }
+
         };
 
         struct OptimzedItem{
